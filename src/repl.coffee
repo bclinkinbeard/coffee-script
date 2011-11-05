@@ -48,7 +48,10 @@ run = (buffer) ->
   backlog = ''
   try
     _ = global._
-    returnValue = CoffeeScript.eval "_=(#{code}\n)", {
+    scopeFix = (for key of global when key.match /^[a-zA-Z_$][0-9a-zA-Z_$]*$/
+      "#{key} = global.#{key};"
+    ).join('')
+    returnValue = CoffeeScript.eval "_=(#{scopeFix}#{code}\n)", {
       filename: 'repl'
       modulename: 'repl'
     }
